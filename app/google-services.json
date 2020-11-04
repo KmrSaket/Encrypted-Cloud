@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "814214089533",
+    "firebase_url": "https://cloudencryption-50def.firebaseio.com",
+    "project_id": "cloudencryption-50def",
+    "storage_bucket": "cloudencryption-50def.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:814214089533:android:3562530b240e25fed05354",
+        "android_client_info": {
+          "package_name": "com.kumarsaket.encyptedcloud"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "814214089533-ummkjk79l4gtmq4qiglndokdauoniiij.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kumarsaket.encyptedcloud",
+            "certificate_hash": "97674710171b65e7c9a42c1461f3e466dcbbc3ec"
+          }
+        },
+        {
+          "client_id": "814214089533-p10627g59q24v3p0g56t8kcuob9kgjuj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtljup-k0CKUUoWz8yRNi4dn9OxMlYPtg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "814214089533-p10627g59q24v3p0g56t8kcuob9kgjuj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

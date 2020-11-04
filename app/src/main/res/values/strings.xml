@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Encypted Cloud</string>
+    <string name="home_cloud_encryp_btnText">Cloud Encryption</string>
+    <string name="browse_image">Browse</string>
+    <string name="keyFolder">Keys</string>
+</resources>

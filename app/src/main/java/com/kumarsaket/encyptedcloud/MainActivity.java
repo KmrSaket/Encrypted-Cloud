@@ -7,12 +7,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.File;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button cloudStoreBtn,cloudRetrieveBtn;
+    Button cloudStoreBtn,cloudRetrieveBtn,localStoreBtn,localRetrieveBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +36,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!new File(s + "Keys").exists()){
             new File(s + "Keys").mkdir();
         }
-        if (!new File(s + "folder2").exists()){
-            new File(s + "folder2").mkdir();
+        if (!new File(s + "local").exists()){
+            new File(s + "local").mkdir();
         }
     }
 
@@ -45,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cloudStoreBtn.setOnClickListener(this);
         cloudRetrieveBtn = findViewById(R.id.cloudRetrieveBtn);
         cloudRetrieveBtn.setOnClickListener(this);
+        localStoreBtn = findViewById(R.id.localStoreBtn);
+        localStoreBtn.setOnClickListener(this);
+        localRetrieveBtn = findViewById(R.id.localRetrieveBtn);
+        localRetrieveBtn.setOnClickListener(this);
     }
 
 
@@ -56,6 +61,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.cloudRetrieveBtn:
                 startActivity(new Intent(this, CloudRetrievalActivity.class));
+                break;
+            case R.id.localStoreBtn:
+                startActivity(new Intent(this, LocalStorageActivity.class));
+                break;
+            case R.id.localRetrieveBtn:
+                startActivity(new Intent(this, LocalRetrievalActivity.class));
                 break;
         }
 

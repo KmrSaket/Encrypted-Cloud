@@ -8,7 +8,7 @@ public class Encryption {
     int[][] PixelMatrix;
     int M;  //height
     int N; //width
-    int alpha = 32;
+    int alpha = 23;
     int setA_maxValue = (int) Math.pow(2, alpha) - 1;
     int[] Kr;
     int[] Kc;
@@ -23,9 +23,17 @@ public class Encryption {
         this.Kc = new int[N];
 
         // initializing Kr
-        for (int i = 0; i < M; i++) this.Kr[i] = random.nextInt(setA_maxValue);
+        for (int i = 0; i < M; i++)
+            this.Kr[i] = random.nextInt(setA_maxValue);
+//            this.Kr[i] = 5000;
+
+
         // initializing Kc
-        for (int i = 0; i < N; i++) this.Kc[i] = random.nextInt(setA_maxValue);
+        for (int i = 0; i < N; i++)
+            this.Kc[i] = random.nextInt(setA_maxValue);
+
+//            this.Kc[i] = 7352525;
+
 
     }
 
@@ -155,7 +163,7 @@ public class Encryption {
         boolean even = true;
         for (int i = 0; i < M; i++) {
             if (even) {
-                for (int j = 0, k = N - 1; j < N; j++, k--) {
+                for (int j = 0, k = N - 1; k >= 0; j++, k--) {
                     b[i][j] = b[i][j] ^ Kc[k];
                 }
             } else {

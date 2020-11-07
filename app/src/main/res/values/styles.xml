@@ -7,4 +7,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="SplashScreenTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground" > @drawable/splashscreen_bg</item>
+    </style>
+
+    <style name="LoginActivity" parent="Theme.AppCompat.NoActionBar">
+    </style>
 </resources>

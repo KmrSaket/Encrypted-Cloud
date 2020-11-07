@@ -7,15 +7,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.ColorSpace;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
@@ -34,13 +30,12 @@ import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Decryption;
+import com.kumarsaket.encyptedcloud.CustomClass.Upload;
 import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Encryption;
 import com.snatik.storage.Storage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.nio.ByteBuffer;
 
 public class CloudStorageActivity extends AppCompatActivity implements View.OnClickListener {
 

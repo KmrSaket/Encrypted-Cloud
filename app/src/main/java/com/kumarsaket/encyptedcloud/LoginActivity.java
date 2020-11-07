@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -34,6 +35,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Intent intent;
     Button googleSignin;
     private GoogleSignInClient mGoogleSignInClient;
+    ProgressBar progressBar;
 
 
     @Override
@@ -44,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initialize() {
+        progressBar = findViewById(R.id.loginprogress);
         intent = new Intent(this, MainActivity.class);
         googleSignin = findViewById(R.id.googleSignin);
         googleSignin.setOnClickListener(this);
@@ -57,7 +60,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        if (currentUser!=null)  startActivity(intent);
+        if (currentUser!=null) {
+            progressBar.setVisibility(View.INVISIBLE);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override
@@ -70,6 +77,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
     private void googleSignin() {
+        progressBar.setVisibility(View.VISIBLE);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -91,6 +99,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.w(TAG, "Google sign in failed", e);
                 // ...
             }
+        }else {
+            progressBar.setVisibility(View.INVISIBLE);
         }
     }
     private void firebaseAuthWithGoogle(String idToken) {

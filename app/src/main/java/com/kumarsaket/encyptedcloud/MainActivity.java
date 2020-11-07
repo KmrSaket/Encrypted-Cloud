@@ -1,24 +1,50 @@
 package com.kumarsaket.encyptedcloud;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.ContextMenu;
+import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.GridLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
 
+//#31587B
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button cloudStoreBtn,cloudRetrieveBtn,localStoreBtn,localRetrieveBtn;
+    GridLayout gridLayout;
+    private Point screenSize;
+    private int screenWidth, screenHeight;
+    private TextView username;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Display display = getWindowManager().getDefaultDisplay();
+        screenSize = new Point();
+        display.getSize(screenSize);
+        screenWidth = screenSize.x;
+        screenHeight = screenSize.y;
+
         initialize();
 
         StringBuilder sb = new StringBuilder();
@@ -30,32 +56,86 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void checkAndCreateFolder(String s) {
-        if (!new File(s).exists() ) {
+        if (!new File(s).exists()) {
             new File(s).mkdir();
         }
-        if (!new File(s + "Keys").exists()){
+        if (!new File(s + "Keys").exists()) {
             new File(s + "Keys").mkdir();
         }
-        if (!new File(s + "local").exists()){
+        if (!new File(s + "local").exists()) {
             new File(s + "local").mkdir();
         }
     }
 
     private void initialize() {
-        cloudStoreBtn = findViewById(R.id.cloudStoreBtn);
-        cloudStoreBtn.setOnClickListener(this);
-        cloudRetrieveBtn = findViewById(R.id.cloudRetrieveBtn);
-        cloudRetrieveBtn.setOnClickListener(this);
-        localStoreBtn = findViewById(R.id.localStoreBtn);
-        localStoreBtn.setOnClickListener(this);
-        localRetrieveBtn = findViewById(R.id.localRetrieveBtn);
-        localRetrieveBtn.setOnClickListener(this);
+        username = findViewById(R.id.welcomeText);
+        String welcomeText = "Hey, " + FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        username.setText(welcomeText);
+
+        gridLayout = findViewById(R.id.home_grid);
+        setLayoutParams(gridLayout, username);
+        setClickEvent(gridLayout);
+
+        ActionBar actionBar;
+        actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.appbar_logo);
+        actionBar.setHomeButtonEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+    }
+
+
+
+    private void setLayoutParams(GridLayout gridLayout, TextView username) {
+        float textH = (float) 0.15,
+                textMtop = (float) 0.025,
+                textMbottom = (float) 0;        //total TV height = 0.2
+
+        float cardH = (float) 0.7 / 3,
+                cardMtop = (float) 0.03;         // total grid height = 0.7 + 0.06 = 0.66
+
+        float imgH = (float) (cardH*0.5),
+        imgMtop= (float) (cardH*0.05),
+        imgMbottom = (float) (cardH*0.05);
+
+        for (int i = 0; i < gridLayout.getChildCount(); i++) {
+            final CardView cardView = (CardView) gridLayout.getChildAt(i);
+            GridLayout.LayoutParams layoutParams = (GridLayout.LayoutParams) cardView.getLayoutParams();
+            layoutParams.height = (int) (screenHeight * cardH);
+            layoutParams.width = (int) (screenWidth * 0.41);
+            if (i != 0 && i != 1)
+                layoutParams.topMargin = (int) (screenHeight * cardMtop);
+            else
+                layoutParams.topMargin = 0;
+
+            if (i % 2 == 0) {
+//                left child
+                layoutParams.leftMargin = (int) (screenWidth * 0.06);
+                layoutParams.rightMargin = (int) (screenWidth * 0.03);
+                cardView.setLayoutParams(layoutParams);
+            } else {
+//                right child
+                layoutParams.leftMargin = (int) (screenWidth * 0.03);
+                layoutParams.rightMargin = (int) (screenWidth * 0.06);
+                cardView.setLayoutParams(layoutParams);
+            }
+
+            LinearLayout linearLayout = (LinearLayout) (cardView.getChildAt(0));
+            ImageView imageView = (ImageView) linearLayout.getChildAt(0);
+            LinearLayout.LayoutParams layoutParamsIMG = (LinearLayout.LayoutParams)imageView .getLayoutParams();
+            layoutParamsIMG.height = (int) (screenHeight *imgH);
+            layoutParamsIMG.topMargin = (int) (screenHeight*imgMtop);
+            layoutParamsIMG.bottomMargin = (int) (screenHeight*imgMbottom);
+            imageView.setLayoutParams(layoutParamsIMG);
+
+
+        }
     }
 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.cloudStoreBtn:
                 startActivity(new Intent(this, CloudStorageActivity.class));
                 break;
@@ -70,5 +150,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+    }
+
+
+    private void setClickEvent(final GridLayout gridLayout) {
+        for (int i = 0; i < gridLayout.getChildCount(); i++) {
+            final CardView cardView = (CardView) gridLayout.getChildAt(i);
+            cardView.setOnClickListener(this);
+        }
     }
 }

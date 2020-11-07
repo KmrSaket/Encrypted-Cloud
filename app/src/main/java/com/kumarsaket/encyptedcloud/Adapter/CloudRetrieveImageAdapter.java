@@ -3,7 +3,6 @@ package com.kumarsaket.encyptedcloud.Adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,13 +16,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kumarsaket.encyptedcloud.R;
 import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Decryption;
-import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Encryption;
-import com.kumarsaket.encyptedcloud.Upload;
+import com.kumarsaket.encyptedcloud.CustomClass.Upload;
 import com.snatik.storage.Storage;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.List;
 

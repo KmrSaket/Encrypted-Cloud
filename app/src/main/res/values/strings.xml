@@ -1,7 +1,18 @@
 <resources>
     <string name="app_name">Encypted Cloud</string>
-    <string name="home_cloud_encryp_btnText">Cloud Encryption</string>
+
     <string name="browse_image">Browse</string>
     <string name="keyFolder">Keys</string>
     <string name="LocalFolder">local</string>
+
+<!--    Main Menu Card Text -->
+    <string name="decrypt_any_img">Decrypt \nany Image</string>
+    <string name="store_to_local">Store to \nLocal</string>
+    <string name="store_to_cloud">Store to \nCloud</string>
+    <string name="retrieve_from_cloud">Retrieve \nfrom Cloud</string>
+    <string name="retrieve_from_local">Retrieve \nfrom Local</string>
+
+<!--    Greeting Texts-->
+    <string name="welcome_sign_in_to_continue">WELCOME!\nSign In To Continue</string>
+    <string name="welcome_text">Hey, example@domain.com</string>
 </resources>

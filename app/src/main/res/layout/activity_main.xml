@@ -4,9 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B7C0EE"
+    android:background="#bc96e6"
     tools:context="com.kumarsaket.encyptedcloud.MainActivity">
-
     <TextView
         android:paddingTop="5dp"
         app:layout_constraintVertical_bias="0"
@@ -17,7 +16,7 @@
         android:fontFamily="@font/poppins_medium"
         android:paddingLeft="30dp"
         android:text="@string/welcome_text"
-        android:textColor="#31587B"
+        android:textColor="#ffffff"
         android:textSize="13sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/home_grid"/>
@@ -57,7 +56,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:src="@drawable/card_store_cloud" />
+                    android:src="@drawable/card_store_cloud"
+                    app:tint="#5d576b" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -96,7 +96,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:src="@drawable/card_retrieve_cloud" />
+                    android:src="@drawable/card_retrieve_cloud"
+                    app:tint="#5d576b" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -136,7 +137,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:src="@drawable/card_store_local" />
+                    android:src="@drawable/card_store_local"
+                    app:tint="#5d576b"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -175,7 +177,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:src="@drawable/card_retrieve_local" />
+                    android:src="@drawable/card_retrieve_local"
+                    app:tint="#5d576b"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -212,7 +215,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:src="@drawable/card_dec_any_img" />
+                    android:src="@drawable/card_dec_any_img"
+                    app:tint="#5d576b"/>
 
                 <TextView
                     android:layout_width="match_parent"

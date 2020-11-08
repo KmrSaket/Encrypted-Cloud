@@ -2,11 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kumarsaket.encyptedcloud">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
+        android:requestLegacyExternalStorage="true"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,19 +16,26 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".SplashScreenActivity"
-            android:theme="@style/SplashScreenTheme">
+            android:theme="@style/SplashScreenTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LocalRetrievalActivity" />
-        <activity android:name=".LocalStorageActivity" />
-        <activity android:name=".CloudRetrievalActivity" />
-        <activity android:name=".LoginActivity" android:theme="@style/LoginActivity"/>
-        <activity android:name=".CloudStorageActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".LocalRetrievalActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".LocalStorageActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CloudRetrievalActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".LoginActivity" android:theme="@style/LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".CloudStorageActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

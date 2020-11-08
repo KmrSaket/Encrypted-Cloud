@@ -65,6 +65,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
     NumberProgressBar uploadingProgress;
     private Point screenSize;
     private int screenWidth, screenHeight;
+    Bitmap encryptedbitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +83,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 if (uploadInprogress) {
                     Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
@@ -156,9 +157,13 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.LSAfilePicker:
-                Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileIntent.setType("image/*");
-                startActivityForResult(fileIntent, PICK_IMAGE_REQUEST);
+                if (uploadInprogress) {
+                    Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    fileIntent.setType("image/*");
+                    startActivityForResult(fileIntent, PICK_IMAGE_REQUEST);
+                }
                 break;
             case R.id.LSAdoEncrypt:
                 if (uploadInprogress) {
@@ -190,10 +195,9 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                                 encryption.doEnc();
                                 final int[][] encryptedPixelMatrix = encryption.PixelMatrix();
 
-                                final Bitmap encryptedbitmap = Bitmap.createBitmap(originalbitmap.getWidth(), originalbitmap.getHeight(), Bitmap.Config.ARGB_8888);
-                                encryptedbitmap.setHasAlpha(originalbitmap.hasAlpha());
-                                for (int i = 0; i < originalbitmap.getHeight(); i++) {
-                                    for (int j = 0; j < originalbitmap.getWidth(); j++) {
+                                encryptedbitmap = Bitmap.createBitmap(originalbitmap.getWidth(), originalbitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                                for (int i = 0; i < encryptedbitmap.getHeight(); i++) {
+                                    for (int j = 0; j < encryptedbitmap.getWidth(); j++) {
                                         encryptedbitmap.setPixel(j, i, encryptedPixelMatrix[i][j]);
                                     }
                                 }
@@ -232,22 +236,14 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                                         flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
                                         flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
                                         imagefile.setImageBitmap(encryptedbitmap);
+                                        originalbitmap.recycle();
                                         llLower.getChildAt(2).setVisibility(View.VISIBLE);
                                         Toast.makeText(getApplicationContext(), "Successfully Encrypted"
                                                 , Toast.LENGTH_SHORT).show();
-                                    }
-                                }, 2000);
-
-                                handler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
                                         uploadInprogress = false;
                                     }
-                                });
-
-
+                                }, 2000);
                                 Log.d(TAG, "onSuccess: decryption done");
-
                             }
                         }).start();
                     } else {
@@ -263,12 +259,13 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
+
             fileUri = data.getData();
             Picasso.get().
                     load(fileUri).
                     into(imagefile);
             filepickerNAME.setText(new File(fileUri.toString()).getName());
-
+            resetUI();
         } else {
             Log.d("EROOR", "onActivityResult: FILE picker ERROR");
         }
@@ -360,5 +357,28 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void resetUI() {
+        doEncrypt.setVisibility(View.VISIBLE);
+        llLower.setVisibility(View.GONE);
+        flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
+        flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
+        LinearLayout container = (LinearLayout) llLower.getChildAt(0);
+        container.getChildAt(1).setVisibility(View.VISIBLE);
+        container.getChildAt(2).setVisibility(View.GONE);
+        TextView tv = (TextView) container.getChildAt(0);
+        tv.setText("Encrypting...");
+        uploadingProgress.setReachedBarColor(Color.parseColor("#3498DB"));
+        uploadingProgress.setProgressTextColor(Color.parseColor("#3498DB"));
+        uploadingProgress.setProgress(0);
+        LinearLayout container2 = (LinearLayout) llLower.getChildAt(1);
+        TextView tv2 = (TextView) container2.getChildAt(0);
+        tv2.setText("Uploading...");
+        flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
+        flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
+        llLower.getChildAt(2).setVisibility(View.INVISIBLE);
+        if (encryptedbitmap != null)
+            encryptedbitmap.recycle();
     }
 }

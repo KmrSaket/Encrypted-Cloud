@@ -2,8 +2,12 @@ package com.kumarsaket.encyptedcloud;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        reqPermissions();
         initialize();
     }
 
@@ -66,11 +71,33 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        if (currentUser!=null) {
+        if (currentUser != null) {
             progressBar.setVisibility(View.INVISIBLE);
             blurLayout.setVisibility(View.INVISIBLE);
             startActivity(intent);
             finish();
+        }
+    }
+
+    private void reqPermissions() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED
+        || ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.ACCESS_NETWORK_STATE}, 0);
+            }
         }
     }
 
@@ -80,8 +107,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.googleSignin:
                 googleSignin();
                 break;
-            }
         }
+    }
 
     private void googleSignin() {
         progressBar.setVisibility(View.VISIBLE);
@@ -92,10 +119,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 // Google Sign In was successful, authenticate with Firebase
@@ -107,11 +133,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.w(TAG, "Google sign in failed", e);
                 // ...
             }
-        }else {
+        } else {
             progressBar.setVisibility(View.INVISIBLE);
             blurLayout.setVisibility(View.INVISIBLE);
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
+
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)

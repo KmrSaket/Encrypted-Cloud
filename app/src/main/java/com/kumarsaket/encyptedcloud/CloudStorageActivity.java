@@ -7,11 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -68,6 +71,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
     private FrameLayout flMiddile;
     NumberProgressBar uploadingProgress;
     ProgressBar encryptingProgress;
+    Bitmap encryptedbitmap;
 
 
     @Override
@@ -86,7 +90,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 if (uploadInprogress) {
                     Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
@@ -153,7 +157,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
         doEncrypt.setLayoutParams(lp3);
 
         ConstraintLayout.LayoutParams lp4 = (ConstraintLayout.LayoutParams) llLower.getLayoutParams();
-        lp4.height = (int) (screenHeight*layout_four_H);
+        lp4.height = (int) (screenHeight * layout_four_H);
         llLower.setLayoutParams(lp4);
 
     }
@@ -162,151 +166,159 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.filePicker:
-                Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                fileIntent.setType("image/*");
-                startActivityForResult(fileIntent, PICK_IMAGE_REQUEST);
+                if (uploadInprogress) {
+                    Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    fileIntent.setType("image/*");
+                    startActivityForResult(fileIntent, PICK_IMAGE_REQUEST);
+                }
                 break;
             case R.id.doEncrypt:
-                if ( uploadInprogress) {
+                if (uploadInprogress) {
                     Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
                     if (fileUri != null) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                uploadInprogress = true;
-                                doEncrypt.setVisibility(View.GONE);
-                                llLower.setVisibility(View.VISIBLE);
-                                flMiddile.getChildAt(1).setVisibility(View.VISIBLE);
-                                flMiddile.getChildAt(2).setVisibility(View.VISIBLE);
+                        if (isNetworkAvailable()) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    uploadInprogress = true;
+                                    doEncrypt.setVisibility(View.GONE);
+                                    llLower.setVisibility(View.VISIBLE);
+                                    flMiddile.getChildAt(1).setVisibility(View.VISIBLE);
+                                    flMiddile.getChildAt(2).setVisibility(View.VISIBLE);
 
-                            }
-                        });
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                final Bitmap originalbitmap = ((BitmapDrawable) imagefile.getDrawable()).getBitmap();
-                                int[][] OriginalPixelMatrix = extract2DpixelArray(originalbitmap);
-                                final Encryption encryption = new Encryption(OriginalPixelMatrix, originalbitmap.getWidth(), originalbitmap.getHeight());
-                                encryption.doEnc();
-                                int[][] encryptedPixelMatrix = encryption.PixelMatrix();
-
-                                final Bitmap encryptedbitmap = Bitmap.createBitmap(originalbitmap.getWidth(), originalbitmap.getHeight(), Bitmap.Config.ARGB_8888);
-                                for (int i = 0; i < originalbitmap.getHeight(); i++) {
-                                    for (int j = 0; j < originalbitmap.getWidth(); j++) {
-                                        encryptedbitmap.setPixel(j, i, encryptedPixelMatrix[i][j]);
-                                    }
                                 }
+                            });
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final Bitmap originalbitmap = ((BitmapDrawable) imagefile.getDrawable()).getBitmap();
+                                    int[][] OriginalPixelMatrix = extract2DpixelArray(originalbitmap);
+                                    final Encryption encryption = new Encryption(OriginalPixelMatrix, originalbitmap.getWidth(), originalbitmap.getHeight());
+                                    encryption.doEnc();
+                                    int[][] encryptedPixelMatrix = encryption.PixelMatrix();
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        LinearLayout container = (LinearLayout) llLower.getChildAt(0);
-                                        container.getChildAt(1).setVisibility(View.GONE);
-                                        container.getChildAt(2).setVisibility(View.VISIBLE);
-                                        TextView tv = (TextView) container.getChildAt(0);
-                                        tv.setText("Encrypted");
+                                    encryptedbitmap = Bitmap.createBitmap(originalbitmap.getWidth(), originalbitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                                    for (int i = 0; i < encryptedbitmap.getHeight(); i++) {
+                                        for (int j = 0; j < encryptedbitmap.getWidth(); j++) {
+                                            encryptedbitmap.setPixel(j, i, encryptedPixelMatrix[i][j]);
+                                        }
                                     }
-                                });
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            LinearLayout container = (LinearLayout) llLower.getChildAt(0);
+                                            container.getChildAt(1).setVisibility(View.GONE);
+                                            container.getChildAt(2).setVisibility(View.VISIBLE);
+                                            TextView tv = (TextView) container.getChildAt(0);
+                                            tv.setText("Encrypted");
+                                        }
+                                    });
 
 
 //                        uploading image
-                                ContentResolver cR = getContentResolver();
-                                MimeTypeMap mime = MimeTypeMap.getSingleton();
-                                String fileExtention = mime.getExtensionFromMimeType(cR.getType(fileUri));
-                                final String IMGfileName = System.currentTimeMillis() + "." + fileExtention;
-                                final String KEYfileName = System.currentTimeMillis() + ".txt";
+                                    ContentResolver cR = getContentResolver();
+                                    MimeTypeMap mime = MimeTypeMap.getSingleton();
+                                    String fileExtention = mime.getExtensionFromMimeType(cR.getType(fileUri));
+                                    final String IMGfileName = System.currentTimeMillis() + "." + fileExtention;
+                                    final String KEYfileName = System.currentTimeMillis() + ".txt";
 
 
-                                StorageReference fileReference = mStorageRef.child(IMGfileName);
+                                    StorageReference fileReference = mStorageRef.child(IMGfileName);
 
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                encryptedbitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                                byte[] data = baos.toByteArray();
+                                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                                    encryptedbitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                                    byte[] data = baos.toByteArray();
 
 
-                                mUploadTask = fileReference.putBytes(data).
-                                        addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull final Exception exception) {
-                                                // Handle unsuccessful uploads
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                            }
-                                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        Handler handler = new Handler();
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        uploadingProgress.setReachedBarColor(Color.parseColor("#70A800"));
-                                                        uploadingProgress.setProgressTextColor(Color.parseColor("#70A800"));
-                                                        LinearLayout container = (LinearLayout) llLower.getChildAt(1);
-                                                        TextView tv = (TextView) container.getChildAt(0);
-                                                        tv.setText("Uploaded");
+                                    mUploadTask = fileReference.putBytes(data).
+                                            addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull final Exception exception) {
+                                                    // Handle unsuccessful uploads
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    });
+                                                }
+                                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                            Handler handler = new Handler();
+                                            handler.postDelayed(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            uploadingProgress.setReachedBarColor(Color.parseColor("#70A800"));
+                                                            uploadingProgress.setProgressTextColor(Color.parseColor("#70A800"));
+                                                            LinearLayout container = (LinearLayout) llLower.getChildAt(1);
+                                                            TextView tv = (TextView) container.getChildAt(0);
+                                                            tv.setText("Uploaded");
 
-                                                    }
-                                                });
-                                            }
-                                        }, 500);
-                                        mStorageRef.child(IMGfileName).getDownloadUrl().
-                                                addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                Toast.makeText(getApplicationContext(), "Unable to fetch Cloud URL", Toast.LENGTH_LONG).show();
-                                                            }
-                                                        });
-                                                    }
-                                                }).
-                                                addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                                    @Override
-                                                    public void onSuccess(Uri uri) {
-                                                        Upload upload = new Upload(IMGfileName,
-                                                                uri.toString(), KEYfileName);
-                                                        String uploadId = mDatabaseRef.push().getKey();
-                                                        mDatabaseRef.child(uploadId).setValue(upload);
-                                                        SaveKeys(encryption.getKc(), encryption.getKr(), KEYfileName);
-                                                        runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
-                                                                flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
-                                                                imagefile.setImageBitmap(encryptedbitmap);
-                                                                llLower.getChildAt(2).setVisibility(View.VISIBLE);
-                                                                Toast.makeText(getApplicationContext(), "Successfully Uploaded"
-                                                                , Toast.LENGTH_SHORT).show();
-                                                                uploadInprogress = false;
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                    }
-                                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                                        final double progress = (double) snapshot.getBytesTransferred() / snapshot.getTotalByteCount() * 100.0;
-                                        runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                uploadingProgress.setProgress((int) progress);
-                                            }
-                                        });
-                                    }
-                                });
+                                                        }
+                                                    });
+                                                }
+                                            }, 500);
+                                            mStorageRef.child(IMGfileName).getDownloadUrl().
+                                                    addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    Toast.makeText(getApplicationContext(), "Unable to fetch Cloud URL", Toast.LENGTH_LONG).show();
+                                                                }
+                                                            });
+                                                        }
+                                                    }).
+                                                    addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                        @Override
+                                                        public void onSuccess(Uri uri) {
+                                                            Upload upload = new Upload(IMGfileName,
+                                                                    uri.toString(), KEYfileName);
+                                                            String uploadId = mDatabaseRef.push().getKey();
+                                                            mDatabaseRef.child(uploadId).setValue(upload);
+                                                            SaveKeys(encryption.getKc(), encryption.getKr(), KEYfileName);
+                                                            runOnUiThread(new Runnable() {
+                                                                @Override
+                                                                public void run() {
+                                                                    flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
+                                                                    flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
+                                                                    imagefile.setImageBitmap(encryptedbitmap);
+                                                                    originalbitmap.recycle();
+                                                                    llLower.getChildAt(2).setVisibility(View.VISIBLE);
+                                                                    Toast.makeText(getApplicationContext(), "Successfully Uploaded"
+                                                                            , Toast.LENGTH_SHORT).show();
+                                                                    uploadInprogress = false;
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                        }
+                                    }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                        @Override
+                                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                                            final double progress = (double) snapshot.getBytesTransferred() / snapshot.getTotalByteCount() * 100.0;
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    uploadingProgress.setProgress((int) progress);
+                                                }
+                                            });
+                                        }
+                                    });
 
-                            }
-                        }).start();
+                                }
+                            }).start();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "No Network", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(this, "NO file Selected", Toast.LENGTH_SHORT).show();
                     }
@@ -325,10 +337,34 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                     load(fileUri).
                     into(imagefile);
             filepickerNAME.setText(new File(fileUri.toString()).getName());
+            resetUI();
 
         } else {
             Log.d("EROOR", "onActivityResult: FILE picker ERROR");
         }
+    }
+
+    private void resetUI() {
+        doEncrypt.setVisibility(View.VISIBLE);
+        llLower.setVisibility(View.GONE);
+        flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
+        flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
+        LinearLayout container = (LinearLayout) llLower.getChildAt(0);
+        container.getChildAt(1).setVisibility(View.VISIBLE);
+        container.getChildAt(2).setVisibility(View.GONE);
+        TextView tv = (TextView) container.getChildAt(0);
+        tv.setText("Encrypting...");
+        uploadingProgress.setReachedBarColor(Color.parseColor("#3498DB"));
+        uploadingProgress.setProgressTextColor(Color.parseColor("#3498DB"));
+        uploadingProgress.setProgress(0);
+        LinearLayout container2 = (LinearLayout) llLower.getChildAt(1);
+        TextView tv2 = (TextView) container2.getChildAt(0);
+        tv2.setText("Uploading...");
+        flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
+        flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
+        llLower.getChildAt(2).setVisibility(View.INVISIBLE);
+        if (encryptedbitmap != null)
+            encryptedbitmap.recycle();
     }
 
     private int[][] extract2DpixelArray(Bitmap bitmap) {
@@ -402,5 +438,12 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
         } else {
             super.onBackPressed();
         }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

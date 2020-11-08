@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#B7C0EE"
+    android:background="#bc96e6"
     tools:context="com.kumarsaket.encyptedcloud.LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,7 +22,8 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            app:tint="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/title"
@@ -32,7 +33,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:text="Encrypted Cloud"
             android:textAlignment="center"
-            android:textColor="#31587B"
+            android:textColor="@color/colorPrimary"
             android:textSize="30sp"
             app:layout_constraintTop_toBottomOf="@id/logo"
             tools:layout_editor_absoluteX="0dp" />
@@ -45,7 +46,7 @@
             android:fontFamily="@font/poppins_regular"
             android:text="@string/welcome_sign_in_to_continue"
             android:textAlignment="center"
-            android:textColor="#31587B"
+            android:textColor="#e7dfc6"
             app:layout_constraintBottom_toTopOf="@id/googleSignin"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.65"

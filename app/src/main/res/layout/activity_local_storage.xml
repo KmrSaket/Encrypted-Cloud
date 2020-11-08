@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocalStorageActivity">
+    tools:context=".LocalStorageActivity"
+    android:background="@color/color4">
 
 
     <LinearLayout
@@ -46,7 +47,7 @@
         android:id="@+id/LSAframe"
         android:layout_width="match_parent"
         android:layout_height="350dp"
-        android:background="#e4e4e4"
+        android:background="@color/color3"
         app:layout_constraintBottom_toTopOf="@id/LSAdoEncrypt"
         app:layout_constraintTop_toBottomOf="@id/LSAtopLL">
 
@@ -66,7 +67,7 @@
             android:layout_gravity="center"
             android:visibility="invisible"
             app:LoadingDots_auto_play="true"
-            app:LoadingDots_dots_color="@android:color/holo_blue_light"
+            app:LoadingDots_dots_color="@color/colorPrimaryDark"
             app:LoadingDots_dots_count="6"
             app:LoadingDots_dots_size="6dp"
             app:LoadingDots_dots_space="10dp"

@@ -6,55 +6,167 @@
     android:layout_height="match_parent"
     tools:context=".CloudStorageActivity">
 
-    <ImageView
-        android:src="@mipmap/ic_launcher"
-        android:id="@+id/imagefile"
+
+    <LinearLayout
+        android:id="@+id/topLL"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/frame"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/filePicker"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingBottom="30dp"/>
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed">
 
-    <EditText
-        android:id="@+id/filename"
+
+        <EditText
+            android:id="@+id/filename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="2"
+            android:enabled="false"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/filePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.3"
+            android:background="@drawable/login_gmail_bg"
+            android:text="@string/browse_image"
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/imagefile"
-        app:layout_constraintBottom_toTopOf="@id/filePicker"/>
+        android:layout_height="350dp"
+        android:background="#e4e4e4"
+        app:layout_constraintBottom_toTopOf="@id/doEncrypt"
+        app:layout_constraintTop_toBottomOf="@id/topLL">
+
+        <ImageView
+            android:id="@+id/imagefile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.kumarsaket.encyptedcloud.blur.BlurLayout
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <com.eyalbira.loadingdots.LoadingDots
+            android:visibility="invisible"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:LoadingDots_auto_play="true"
+            app:LoadingDots_dots_color="@android:color/holo_blue_light"
+            app:LoadingDots_dots_count="6"
+            app:LoadingDots_dots_size="6dp"
+            app:LoadingDots_dots_space="10dp"
+            app:LoadingDots_loop_duration="1600"
+            app:LoadingDots_jump_duration="400"
+            app:LoadingDots_jump_height="10dp"/>
+
+
+    </FrameLayout>
+
 
     <Button
-        android:id="@+id/filePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/browse_image"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/doEncrypt"
-        app:layout_constraintTop_toBottomOf="@id/filename"
-        app:layout_constraintVertical_bias="0.939" />
-    <Button
+        android:drawableLeft="@drawable/encrypt_icon"
+        app:drawableTint="#FFFFFF"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:id="@+id/doEncrypt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Encrypt"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/filePicker"
+        android:background="@drawable/login_gmail_bg"
+        android:text="Upload"
+        android:textColor="#ffffff"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/llprogress"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/filename"
-        app:layout_constraintVertical_bias="0.939" />
+        app:layout_constraintTop_toBottomOf="@id/frame" />
 
-    <Button
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/llprogress"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="test"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imagefile" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/doEncrypt"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="end"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="2"
+                android:text="Encrypting..." />
+
+            <ProgressBar
+                android:id="@+id/encryptingProgress"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal" />
+
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/encryptingProgressDONE"
+                style="@style/NumberProgressBar_Passing_Green"
+                android:visibility="gone"
+                app:progress_current="100"
+                app:progress_max="100"
+                app:progress_text_size="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="end"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="2"
+                android:text="Uploading..." />
+
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/uploadingprogress"
+                style="@style/NumberProgressBar_Default"
+                app:progress_current="0"
+                app:progress_max="100"
+                app:progress_text_size="15sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:src="@drawable/tick_mark"
+            tools:visibility="visible"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:visibility="invisible"
+            app:tint="#00ff00" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

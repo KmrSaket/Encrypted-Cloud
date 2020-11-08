@@ -25,6 +25,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.jpardogo.android.googleprogressbar.library.GoogleMusicDicesDrawable;
+import com.jpardogo.android.googleprogressbar.library.FoldingCirclesDrawable;
+import com.kumarsaket.encyptedcloud.blur.BlurLayout;
+
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -36,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     Button googleSignin;
     private GoogleSignInClient mGoogleSignInClient;
     ProgressBar progressBar;
+    BlurLayout blurLayout;
 
 
     @Override
@@ -46,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void initialize() {
+        blurLayout = findViewById(R.id.blur);
         progressBar = findViewById(R.id.loginprogress);
         intent = new Intent(this, MainActivity.class);
         googleSignin = findViewById(R.id.googleSignin);
@@ -62,6 +68,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser!=null) {
             progressBar.setVisibility(View.INVISIBLE);
+            blurLayout.setVisibility(View.INVISIBLE);
             startActivity(intent);
             finish();
         }
@@ -78,6 +85,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void googleSignin() {
         progressBar.setVisibility(View.VISIBLE);
+        blurLayout.setVisibility(View.VISIBLE);
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -101,6 +109,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }else {
             progressBar.setVisibility(View.INVISIBLE);
+            blurLayout.setVisibility(View.INVISIBLE);
         }
     }
     private void firebaseAuthWithGoogle(String idToken) {

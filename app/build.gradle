@@ -46,6 +46,13 @@ dependencies {
 //    picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+//    login page progress
+    implementation 'com.jpardogo.googleprogressbar:library:1.1.0'
 
+//      number progress
+    implementation 'com.daimajia.numberprogressbar:library:1.4@aar'
+
+//      dots loading progress bar
+    implementation 'com.eyalbira.loadingdots:loading-dots:1.0.2'
 
 }

@@ -1,9 +1,11 @@
 package com.kumarsaket.encyptedcloud;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import android.view.Menu;
 
 import android.content.Intent;
 import android.graphics.Point;
@@ -11,6 +13,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.ContextMenu;
 import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseAuth = FirebaseAuth.getInstance();
         Display display = getWindowManager().getDefaultDisplay();
         screenSize = new Point();
         display.getSize(screenSize);
@@ -69,11 +73,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initialize() {
         username = findViewById(R.id.welcomeText);
-        String welcomeText = "Hey, " + FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String welcomeText = "Hey, " + firebaseAuth.getCurrentUser().getEmail();
         username.setText(welcomeText);
 
         gridLayout = findViewById(R.id.home_grid);
-        setLayoutParams(gridLayout, username);
+        setLayoutParams(gridLayout);
         setClickEvent(gridLayout);
 
         ActionBar actionBar;
@@ -86,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    private void setLayoutParams(GridLayout gridLayout, TextView username) {
+    private void setLayoutParams(GridLayout gridLayout) {
         float textH = (float) 0.15,
                 textMtop = (float) 0.025,
                 textMbottom = (float) 0;        //total TV height = 0.2
@@ -152,6 +156,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.signout:
+                firebaseAuth.signOut();
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                finish();
+                break;
+        }
+        return true;
+    }
 
     private void setClickEvent(final GridLayout gridLayout) {
         for (int i = 0; i < gridLayout.getChildCount(); i++) {

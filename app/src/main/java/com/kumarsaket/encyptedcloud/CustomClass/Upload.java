@@ -12,9 +12,6 @@ public class Upload {
 
 
     public Upload(String mName, String mImageUrl, String mKeyName) {
-        if (mName.trim().isEmpty()){
-            mName = "No Name";
-        }
         this.mName = mName;
         this.mImageUrl = mImageUrl;
         this.mKeyName = mKeyName;

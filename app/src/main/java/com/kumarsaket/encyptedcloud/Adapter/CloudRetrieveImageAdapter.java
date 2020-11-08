@@ -61,8 +61,7 @@ public class CloudRetrieveImageAdapter extends RecyclerView.Adapter<CloudRetriev
                                 .append(File.separator)
                                 .append(mContext.getResources().getString(R.string.keyFolder))
                                 .append(File.separator)
-                                .append(uploadCurrent.getmKeyName())
-                                .append(".txt");
+                                .append(uploadCurrent.getmKeyName());
                         String content = storage.readTextFile(keyPath.toString());
 
 //                        extract key

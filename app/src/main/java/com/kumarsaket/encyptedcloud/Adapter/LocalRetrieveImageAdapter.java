@@ -93,9 +93,6 @@ public class LocalRetrieveImageAdapter extends RecyclerView.Adapter<LocalRetriev
                         Log.d(TAG, "onError: " + e);
                     }
                 });
-
-
-
     }
 
     @Override

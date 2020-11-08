@@ -2,25 +2,35 @@ package com.kumarsaket.encyptedcloud;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.numberprogressbar.NumberProgressBar;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +44,7 @@ import com.google.firebase.storage.UploadTask;
 import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Decryption;
 import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Encryption;
 import com.snatik.storage.Storage;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -43,25 +54,57 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
     private static final String TAG = "LocalStorageActivity";
     Button filePicker, doEncrypt;
     ImageView imagefile;
-    ImageView test;
-    ProgressBar progressBar;
     Uri fileUri;
+    EditText filepickerNAME;
     private FirebaseAuth mAuth;
     private int PICK_IMAGE_REQUEST = 101;
     boolean uploadInprogress;
     Handler handler = new Handler();
+    private LinearLayout llUpper, llLower;
+    private FrameLayout flMiddile;
+    NumberProgressBar uploadingProgress;
+    private Point screenSize;
+    private int screenWidth, screenHeight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_local_storage);
+
+        Display display = getWindowManager().getDefaultDisplay();
+        screenSize = new Point();
+        display.getSize(screenSize);
+        screenWidth = screenSize.x;
+        screenHeight = screenSize.y;
+
         initialize();
     }
 
-    private void initialize() {
-        test = findViewById(R.id.test);
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                if (uploadInprogress) {
+                    Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
+                } else {
+                    this.finish();
+                }
+                break;
+        }
+        return true;
+    }
 
-        progressBar = findViewById(R.id.LSAprogress);
+
+    private void initialize() {
+        ActionBar actionBar;
+        actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        uploadingProgress = findViewById(R.id.LSAuploadingprogress);
+        llUpper = findViewById(R.id.LSAtopLL);
+        flMiddile = findViewById(R.id.LSAframe);
+        llLower = findViewById(R.id.LSAllprogress);
+        filepickerNAME = findViewById(R.id.LSAfilename);
         filePicker = findViewById(R.id.LSAfilePicker);
         filePicker.setOnClickListener(this);
         imagefile = findViewById(R.id.LSAimagefile);
@@ -69,6 +112,44 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         doEncrypt.setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         uploadInprogress = false;
+        setLayoutParams(llUpper, flMiddile, doEncrypt, llLower);
+    }
+
+    private void setLayoutParams(LinearLayout llUpper, FrameLayout flMiddile, Button doEncrypt, LinearLayout llLower) {
+        float layout_one_marginT = (float) 0.02,
+                layout_one_marginB = (float) 0.01,
+                layout_one_H = (float) 0.1;        //  0.13
+
+        float layout_two_marginB = (float) 0.02,
+                layout_two_H = (float) 0.4;         //  0.42
+
+        float layout_three_H = (float) 0.08,
+                layout_three_W = (float) 0.3,
+                layout_three_marginT = (float) 0.02;    //  0.22
+
+        float layout_four_H = (float) 0.3;
+
+        ConstraintLayout.LayoutParams lp1 = (ConstraintLayout.LayoutParams) llUpper.getLayoutParams();
+        lp1.topMargin = (int) (screenHeight * layout_one_marginT);
+        lp1.bottomMargin = (int) (screenHeight * layout_one_marginB);
+        lp1.height = (int) (screenHeight * layout_one_H);
+        llUpper.setLayoutParams(lp1);
+
+        ConstraintLayout.LayoutParams lp2 = (ConstraintLayout.LayoutParams) flMiddile.getLayoutParams();
+        lp2.height = (int) (screenHeight * layout_two_H);
+        lp2.bottomMargin = (int) (screenHeight * layout_two_marginB);
+        flMiddile.setLayoutParams(lp2);
+
+        ConstraintLayout.LayoutParams lp3 = (ConstraintLayout.LayoutParams) doEncrypt.getLayoutParams();
+        lp3.height = (int) (screenHeight * layout_three_H);
+        lp3.topMargin = (int) (screenHeight * layout_three_marginT);
+        lp3.width = (int) (screenWidth * layout_three_W);
+        doEncrypt.setLayoutParams(lp3);
+
+        ConstraintLayout.LayoutParams lp4 = (ConstraintLayout.LayoutParams) llLower.getLayoutParams();
+        lp4.height = (int) (screenHeight * layout_four_H);
+        llLower.setLayoutParams(lp4);
+
     }
 
     @Override
@@ -91,13 +172,20 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                                     @Override
                                     public void run() {
                                         uploadInprogress = true;
-                                        progressBar.setVisibility(View.VISIBLE);
+                                        doEncrypt.setVisibility(View.GONE);
+                                        llLower.setVisibility(View.VISIBLE);
+                                        flMiddile.getChildAt(1).setVisibility(View.VISIBLE);
+                                        flMiddile.getChildAt(2).setVisibility(View.VISIBLE);
                                     }
                                 });
+                            }
+                        }).start();
+
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
                                 final Bitmap originalbitmap = ((BitmapDrawable) imagefile.getDrawable()).getBitmap();
-                                Log.d(TAG, "run: originalAPLHA ::: " + originalbitmap.hasAlpha());
                                 final int[][] OriginalPixelMatrix = extract2DpixelArray(originalbitmap);
-                                final int[][] oPPP = extract2DpixelArray(originalbitmap);
                                 final Encryption encryption = new Encryption(OriginalPixelMatrix, originalbitmap.getWidth(), originalbitmap.getHeight());
                                 encryption.doEnc();
                                 final int[][] encryptedPixelMatrix = encryption.PixelMatrix();
@@ -109,7 +197,18 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                                         encryptedbitmap.setPixel(j, i, encryptedPixelMatrix[i][j]);
                                     }
                                 }
-                                Log.d(TAG, "run: encryptedbitmap ::: " + encryptedbitmap.hasAlpha());
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        LinearLayout container = (LinearLayout) llLower.getChildAt(0);
+                                        container.getChildAt(1).setVisibility(View.GONE);
+                                        container.getChildAt(2).setVisibility(View.VISIBLE);
+                                        TextView tv = (TextView) container.getChildAt(0);
+                                        tv.setText("Encrypted");
+                                    }
+                                });
+
 //                                getting extention and naming files :- Encrypted Image and Encryption Key
                                 ContentResolver cR = getContentResolver();
                                 MimeTypeMap mime = MimeTypeMap.getSingleton();
@@ -120,51 +219,29 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
 
 //                                uploading image and store keys
                                 SaveKeys(encryption.getKc(), encryption.getKr(), KEYfileName, IMGfileName, encryptedbitmap);
-                                Log.d(TAG, "onSuccess: encryption done");
+
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        uploadingProgress.setReachedBarColor(Color.parseColor("#70A800"));
+                                        uploadingProgress.setProgressTextColor(Color.parseColor("#70A800"));
+                                        uploadingProgress.setProgress(100);
+                                        LinearLayout container = (LinearLayout) llLower.getChildAt(1);
+                                        TextView tv = (TextView) container.getChildAt(0);
+                                        tv.setText("Uploaded");
+                                        flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
+                                        flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
+                                        imagefile.setImageBitmap(encryptedbitmap);
+                                        llLower.getChildAt(2).setVisibility(View.VISIBLE);
+                                        Toast.makeText(getApplicationContext(), "Successfully Encrypted"
+                                                , Toast.LENGTH_SHORT).show();
+                                    }
+                                }, 2000);
 
                                 handler.post(new Runnable() {
                                     @Override
                                     public void run() {
                                         uploadInprogress = false;
-
-                                        test.setImageBitmap(encryptedbitmap);
-                                        Bitmap originalbitmap2 = ((BitmapDrawable) test.getDrawable()).getBitmap();
-
-                                        int[][] OriginalPixelMatrix2 = extract2DpixelArray(originalbitmap2);
-                                        final Decryption decryption = new Decryption(OriginalPixelMatrix2, originalbitmap2.getWidth(),
-                                                originalbitmap2.getHeight(), encryption.getKr(), encryption.getKc());
-                                        decryption.doDecrypt();
-                                        int[][] decryptedPixelMatrix = decryption.PixelMatrix();
-
-                                        final Bitmap decryptedbitmap = Bitmap.createBitmap(originalbitmap2.getWidth(), originalbitmap2.getHeight(), Bitmap.Config.ARGB_8888);
-                                        decryptedbitmap.setHasAlpha(encryptedbitmap.hasAlpha());
-                                        for (int i = 0; i < decryptedbitmap.getHeight(); i++) {
-                                            for (int j = 0; j < decryptedbitmap.getWidth(); j++) {
-                                                decryptedbitmap.setPixel(j, i, decryptedPixelMatrix[i][j]);
-                                            }
-                                        }
-
-                                        extract2DpixelArray(decryptedbitmap);
-
-                                        Log.d(TAG, "run: decryptedbitmap ::: " + decryptedbitmap.hasAlpha());
-
-                                        imagefile.setImageBitmap(decryptedbitmap);
-                                        boolean flag = true;
-                                        for (int i = 0; i < originalbitmap.getHeight(); i++) {
-                                            for (int j = 0; j < originalbitmap.getWidth(); j++) {
-                                                if (oPPP[i][j] !=decryptedPixelMatrix[i][j]){
-                                                    flag = false;
-                                                    break;
-                                                }
-                                            }
-                                        }
-                                        if (flag){
-                                            Toast.makeText(getApplicationContext(), "EQUAL", Toast.LENGTH_LONG).show();
-                                        }else {
-                                            Toast.makeText(getApplicationContext(), "NOT EQUAL", Toast.LENGTH_LONG).show();
-                                        }
-
-                                        progressBar.setVisibility(View.INVISIBLE);
                                     }
                                 });
 
@@ -174,7 +251,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                             }
                         }).start();
                     } else {
-                        Toast.makeText(this, "NO file Selecterd", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "NO file Selected", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 }
@@ -187,7 +264,10 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null) {
             fileUri = data.getData();
-            imagefile.setImageURI(fileUri);
+            Picasso.get().
+                    load(fileUri).
+                    into(imagefile);
+            filepickerNAME.setText(new File(fileUri.toString()).getName());
 
         } else {
             Log.d("EROOR", "onActivityResult: FILE picker ERROR");
@@ -233,7 +313,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
             IMGPath.append(dir);
             IMGPath.append(File.separator);
             IMGPath.append("image");
-            if (!new File(IMGPath.toString()).exists()){
+            if (!new File(IMGPath.toString()).exists()) {
                 new File(IMGPath.toString()).mkdir();
             }
             IMGPath.append(File.separator);
@@ -243,7 +323,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
             KEYPath.append(dir);
             KEYPath.append(File.separator);
             KEYPath.append("keys");
-            if (!new File(KEYPath.toString()).exists()){
+            if (!new File(KEYPath.toString()).exists()) {
                 new File(KEYPath.toString()).mkdir();
             }
             KEYPath.append(File.separator);
@@ -262,17 +342,22 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
             storage.createFile(IMGPath.toString(), b);
             storage.createFile(KEYPath.toString(), keys.toString());
 
-        } catch (Exception e) {
-            Log.d(TAG, "SaveKeys: Error Ocurred" + e);
+        } catch (final Exception e) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getApplication(), "Error while fetching Keys : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         Log.d(TAG, "SaveKeys: DONE");
     }
 
     @Override
     public void onBackPressed() {
-        if (uploadInprogress){
+        if (uploadInprogress) {
             Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
-        }else {
+        } else {
             super.onBackPressed();
         }
     }

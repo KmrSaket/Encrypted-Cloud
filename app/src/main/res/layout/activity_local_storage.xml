@@ -6,57 +6,171 @@
     android:layout_height="match_parent"
     tools:context=".LocalStorageActivity">
 
-    <ImageView
-        android:id="@+id/test"
+
+    <LinearLayout
+        android:id="@+id/LSAtopLL"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingBottom="30dp"
-        android:src="@mipmap/ic_launcher"
-        app:layout_constraintBottom_toTopOf="@id/LSAimagefile"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-    <ImageView
-        android:id="@+id/LSAimagefile"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:paddingBottom="30dp"
-        android:src="@mipmap/ic_launcher"
-        app:layout_constraintBottom_toTopOf="@id/LSAfilePicker"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/test" />
-
-
-    <ProgressBar
-        android:id="@+id/LSAprogress"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible" />
-
-
-    <Button
-        android:id="@+id/LSAfilePicker"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/browse_image"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/LSAdoEncrypt"
-        app:layout_constraintTop_toBottomOf="@id/LSAimagefile"
-        app:layout_constraintVertical_bias="0.939" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/LSAframe"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed">
+
+
+        <EditText
+            android:id="@+id/LSAfilename"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="2"
+            android:enabled="false"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/LSAfilePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.3"
+            android:background="@drawable/login_gmail_bg"
+            android:text="@string/browse_image"
+            android:textColor="#ffffff"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/LSAframe"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:background="#e4e4e4"
+        app:layout_constraintBottom_toTopOf="@id/LSAdoEncrypt"
+        app:layout_constraintTop_toBottomOf="@id/LSAtopLL">
+
+        <ImageView
+            android:id="@+id/LSAimagefile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.kumarsaket.encyptedcloud.blur.BlurLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible" />
+
+        <com.eyalbira.loadingdots.LoadingDots
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:LoadingDots_auto_play="true"
+            app:LoadingDots_dots_color="@android:color/holo_blue_light"
+            app:LoadingDots_dots_count="6"
+            app:LoadingDots_dots_size="6dp"
+            app:LoadingDots_dots_space="10dp"
+            app:LoadingDots_jump_duration="400"
+            app:LoadingDots_jump_height="10dp"
+            app:LoadingDots_loop_duration="1600" />
+
+
+    </FrameLayout>
+
+
 
     <Button
         android:id="@+id/LSAdoEncrypt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Encrypt"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/LSAfilePicker"
+        android:background="@drawable/login_gmail_bg"
+        android:drawableLeft="@drawable/encrypt_icon"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Upload"
+        android:textColor="#ffffff"
+        android:textSize="13sp"
+        app:drawableTint="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@id/LSAllprogress"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/LSAimagefile"
-        app:layout_constraintVertical_bias="0.939" />
+        app:layout_constraintTop_toBottomOf="@id/LSAframe" />
+
+
+    <LinearLayout
+        android:id="@+id/LSAllprogress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/LSAdoEncrypt"
+        tools:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="end"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="2"
+                android:text="Encrypting..." />
+
+            <ProgressBar
+                android:id="@+id/LSAencryptingProgress"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal" />
+
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/LSAencryptingProgressDONE"
+                style="@style/NumberProgressBar_Passing_Green"
+                android:visibility="gone"
+                app:progress_current="100"
+                app:progress_max="100"
+                app:progress_text_size="15sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="end"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="2"
+                android:text="Uploading..." />
+
+            <com.daimajia.numberprogressbar.NumberProgressBar
+                android:id="@+id/LSAuploadingprogress"
+                style="@style/NumberProgressBar_Default"
+                app:progress_current="0"
+                app:progress_max="100"
+                app:progress_text_size="15sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_marginTop="5dp"
+            android:layout_gravity="center"
+            android:src="@drawable/tick_mark"
+            tools:visibility="visible"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:visibility="invisible"
+            app:tint="#00ff00" />
+    </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

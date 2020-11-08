@@ -56,6 +56,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
     ImageView imagefile;
     Uri fileUri;
     EditText filepickerNAME;
+    boolean uploadInprogress;
     private Point screenSize;
     private int screenWidth, screenHeight;
     private FirebaseAuth mAuth;
@@ -87,7 +88,11 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
-                this.finish();
+                if (uploadInprogress) {
+                    Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
+                } else {
+                    this.finish();
+                }
                 break;
         }
         return true;
@@ -112,6 +117,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
         mAuth = FirebaseAuth.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads/" + mAuth.getCurrentUser().getUid());
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads/" + mAuth.getCurrentUser().getUid());
+        uploadInprogress = false;
         setLayoutParams(llUpper, flMiddile, doEncrypt, llLower);
     }
 
@@ -161,13 +167,14 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                 startActivityForResult(fileIntent, PICK_IMAGE_REQUEST);
                 break;
             case R.id.doEncrypt:
-                if (mUploadTask != null && mUploadTask.isInProgress()) {
+                if ( uploadInprogress) {
                     Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
                 } else {
                     if (fileUri != null) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                uploadInprogress = true;
                                 doEncrypt.setVisibility(View.GONE);
                                 llLower.setVisibility(View.VISIBLE);
                                 flMiddile.getChildAt(1).setVisibility(View.VISIBLE);
@@ -279,6 +286,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                                                                 llLower.getChildAt(2).setVisibility(View.VISIBLE);
                                                                 Toast.makeText(getApplicationContext(), "Successfully Uploaded"
                                                                 , Toast.LENGTH_SHORT).show();
+                                                                uploadInprogress = false;
                                                             }
                                                         });
                                                     }
@@ -300,7 +308,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                             }
                         }).start();
                     } else {
-                        Toast.makeText(this, "NO file Selecterd", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "NO file Selected", Toast.LENGTH_SHORT).show();
                     }
                     break;
                 }
@@ -386,5 +394,13 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
 
         }
         Log.d(TAG, "SaveKeys: DONE");
+    }
+
+    public void onBackPressed() {
+        if (uploadInprogress) {
+            Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

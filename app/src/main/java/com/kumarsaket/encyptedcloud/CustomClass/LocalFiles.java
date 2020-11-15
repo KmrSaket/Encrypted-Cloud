@@ -1,4 +1,4 @@
-package com.kumarsaket.encyptedcloud.RubiksCubeAlgo;
+package com.kumarsaket.encyptedcloud.CustomClass;
 
 public class LocalFiles {
 

@@ -42,7 +42,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.kumarsaket.encyptedcloud.CustomClass.Upload;
 import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Encryption;
@@ -60,18 +59,17 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
     Uri fileUri;
     EditText filepickerNAME;
     boolean uploadInprogress;
-    private Point screenSize;
     private int screenWidth, screenHeight;
-    private FirebaseAuth mAuth;
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
-    private StorageTask mUploadTask;
     private int PICK_IMAGE_REQUEST = 101;
-    private LinearLayout llUpper, llLower;
+    private LinearLayout llLower;
+    //    private LinearLayout shareLayot;
     private FrameLayout flMiddile;
     NumberProgressBar uploadingProgress;
     ProgressBar encryptingProgress;
     Bitmap encryptedbitmap;
+    private Intent imageIntent, key;
 
 
     @Override
@@ -79,7 +77,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cloud_storage);
         Display display = getWindowManager().getDefaultDisplay();
-        screenSize = new Point();
+        Point screenSize = new Point();
         display.getSize(screenSize);
         screenWidth = screenSize.x;
         screenHeight = screenSize.y;
@@ -90,14 +88,12 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (uploadInprogress) {
-                    Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
-                } else {
-                    this.finish();
-                }
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            if (uploadInprogress) {
+                Toast.makeText(this, R.string.enc_under_progress, Toast.LENGTH_LONG).show();
+            } else {
+                this.finish();
+            }
         }
         return true;
     }
@@ -109,19 +105,26 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
 
         encryptingProgress = findViewById(R.id.encryptingProgress);
         uploadingProgress = findViewById(R.id.uploadingprogress);
-        llUpper = findViewById(R.id.topLL);
+        LinearLayout llUpper = findViewById(R.id.topLL);
         flMiddile = findViewById(R.id.frame);
         llLower = findViewById(R.id.llprogress);
+//        shareLayot = findViewById(R.id.shareLayout);
+        Button shareIMG = findViewById(R.id.CSshareimg);
+        shareIMG.setOnClickListener(this);
+        Button shareKEY = findViewById(R.id.CSshareKey);
+        shareKEY.setOnClickListener(this);
         filepickerNAME = findViewById(R.id.filename);
         filePicker = findViewById(R.id.filePicker);
         filePicker.setOnClickListener(this);
         imagefile = findViewById(R.id.imagefile);
         doEncrypt = findViewById(R.id.doEncrypt);
         doEncrypt.setOnClickListener(this);
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mStorageRef = FirebaseStorage.getInstance().getReference("uploads/" + mAuth.getCurrentUser().getUid());
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("uploads/" + mAuth.getCurrentUser().getUid());
         uploadInprogress = false;
+        imageIntent = new Intent(Intent.ACTION_SEND);
+        imageIntent.setType("image/png");
         setLayoutParams(llUpper, flMiddile, doEncrypt, llLower);
     }
 
@@ -135,9 +138,12 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
 
         float layout_three_H = (float) 0.08,
                 layout_three_W = (float) 0.3,
-                layout_three_marginT = (float) 0.02;    //  0.22
+                layout_three_marginT = (float) 0.02;    //  0.4     (TEMP)
 
-        float layout_four_H = (float) 0.3;
+        float layout_four_H = (float) 0.25;              // 0.25
+
+        float share_layout_marginT = (float) 0.02,
+                share_layout_H = (float) 0.18;           // 0.2
 
         ConstraintLayout.LayoutParams lp1 = (ConstraintLayout.LayoutParams) llUpper.getLayoutParams();
         lp1.topMargin = (int) (screenHeight * layout_one_marginT);
@@ -160,14 +166,26 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
         lp4.height = (int) (screenHeight * layout_four_H);
         llLower.setLayoutParams(lp4);
 
+        /*ConstraintLayout.LayoutParams lpSahre = (ConstraintLayout.LayoutParams) shareLayput.getLayoutParams();
+        lpSahre.height = (int) (screenHeight * share_layout_H);
+        lpSahre.topMargin = (int) (screenHeight * share_layout_marginT);
+        shareLayput.setLayoutParams(lpSahre);*/
+
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.CSshareimg:
+                startActivity(imageIntent);
+                Toast.makeText(getApplicationContext(), "IMG", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.CSshareKey:
+                Toast.makeText(getApplicationContext(), "KEY", Toast.LENGTH_SHORT).show();
+                break;
             case R.id.filePicker:
                 if (uploadInprogress) {
-                    Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.enc_under_progress, Toast.LENGTH_SHORT).show();
                 } else {
                     Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     fileIntent.setType("image/*");
@@ -176,7 +194,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                 break;
             case R.id.doEncrypt:
                 if (uploadInprogress) {
-                    Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.enc_under_progress, Toast.LENGTH_SHORT).show();
                 } else {
                     if (fileUri != null) {
                         if (isNetworkAvailable()) {
@@ -213,7 +231,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                                             container.getChildAt(1).setVisibility(View.GONE);
                                             container.getChildAt(2).setVisibility(View.VISIBLE);
                                             TextView tv = (TextView) container.getChildAt(0);
-                                            tv.setText("Encrypted");
+                                            tv.setText(R.string.encrypted);
                                         }
                                     });
 
@@ -232,8 +250,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                                     encryptedbitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
                                     byte[] data = baos.toByteArray();
 
-
-                                    mUploadTask = fileReference.putBytes(data).
+                                    fileReference.putBytes(data).
                                             addOnFailureListener(new OnFailureListener() {
                                                 @Override
                                                 public void onFailure(@NonNull final Exception exception) {
@@ -259,7 +276,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                                                             uploadingProgress.setProgressTextColor(Color.parseColor("#70A800"));
                                                             LinearLayout container = (LinearLayout) llLower.getChildAt(1);
                                                             TextView tv = (TextView) container.getChildAt(0);
-                                                            tv.setText("Uploaded");
+                                                            tv.setText(R.string.uploaded);
 
                                                         }
                                                     });
@@ -272,7 +289,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                                                             runOnUiThread(new Runnable() {
                                                                 @Override
                                                                 public void run() {
-                                                                    Toast.makeText(getApplicationContext(), "Unable to fetch Cloud URL", Toast.LENGTH_LONG).show();
+                                                                    Toast.makeText(getApplicationContext(), R.string.error_fetching_imageUrl, Toast.LENGTH_LONG).show();
                                                                 }
                                                             });
                                                         }
@@ -291,9 +308,10 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                                                                     flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
                                                                     flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
                                                                     imagefile.setImageBitmap(encryptedbitmap);
-                                                                    originalbitmap.recycle();
+//                                                                    originalbitmap.recycle();
                                                                     llLower.getChildAt(2).setVisibility(View.VISIBLE);
-                                                                    Toast.makeText(getApplicationContext(), "Successfully Uploaded"
+//                                                                    shareLayot.setVisibility(View.VISIBLE);
+                                                                    Toast.makeText(getApplicationContext(), R.string.enc_success
                                                                             , Toast.LENGTH_SHORT).show();
                                                                     uploadInprogress = false;
                                                                 }
@@ -317,10 +335,10 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
                                 }
                             }).start();
                         } else {
-                            Toast.makeText(getApplicationContext(), "No Network", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.noNetwork, Toast.LENGTH_SHORT).show();
                         }
                     } else {
-                        Toast.makeText(this, "NO file Selected", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.no_file_selected, Toast.LENGTH_SHORT).show();
                     }
                     break;
                 }
@@ -353,18 +371,19 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
         container.getChildAt(1).setVisibility(View.VISIBLE);
         container.getChildAt(2).setVisibility(View.GONE);
         TextView tv = (TextView) container.getChildAt(0);
-        tv.setText("Encrypting...");
+        tv.setText(R.string.encrypting);
         uploadingProgress.setReachedBarColor(Color.parseColor("#3498DB"));
         uploadingProgress.setProgressTextColor(Color.parseColor("#3498DB"));
         uploadingProgress.setProgress(0);
         LinearLayout container2 = (LinearLayout) llLower.getChildAt(1);
         TextView tv2 = (TextView) container2.getChildAt(0);
-        tv2.setText("Uploading...");
+        tv2.setText(R.string.uploading);
         flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
         flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
         llLower.getChildAt(2).setVisibility(View.INVISIBLE);
-        if (encryptedbitmap != null)
-            encryptedbitmap.recycle();
+//        shareLayot.setVisibility(View.GONE);
+//        if (encryptedbitmap != null)
+//            encryptedbitmap.recycle();
     }
 
     private int[][] extract2DpixelArray(Bitmap bitmap) {
@@ -397,6 +416,8 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
             keyPath.append(File.separator);
             keyPath.append(getApplication().getString(R.string.app_name));
             keyPath.append(File.separator);
+            keyPath.append(getApplication().getString(R.string.CloudFolder));
+            keyPath.append(File.separator);
             keyPath.append(getApplication().getString(R.string.keyFolder));
 
             if (!new File(keyPath.toString()).exists()) {
@@ -424,7 +445,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplication(), "Error while saving Keys : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplication(), getString(R.string.error_saving_keys) + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -434,7 +455,7 @@ public class CloudStorageActivity extends AppCompatActivity implements View.OnCl
 
     public void onBackPressed() {
         if (uploadInprogress) {
-            Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.enc_under_progress, Toast.LENGTH_LONG).show();
         } else {
             super.onBackPressed();
         }

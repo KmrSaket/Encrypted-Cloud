@@ -18,7 +18,6 @@ public class Upload {
     }
 
 
-
     public String getmKeyName() {
         return mKeyName;
     }

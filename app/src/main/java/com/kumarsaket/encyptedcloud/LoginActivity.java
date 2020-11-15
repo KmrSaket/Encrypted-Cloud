@@ -5,14 +5,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -23,14 +25,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.jpardogo.android.googleprogressbar.library.GoogleMusicDicesDrawable;
-import com.jpardogo.android.googleprogressbar.library.FoldingCirclesDrawable;
 import com.kumarsaket.encyptedcloud.blur.BlurLayout;
 
 
@@ -89,7 +88,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 || ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED
-        || ContextCompat.checkSelfPermission(getApplicationContext(),
+                || ContextCompat.checkSelfPermission(getApplicationContext(),
                 Manifest.permission.ACCESS_NETWORK_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -101,12 +100,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.googleSignin:
+        if (v.getId() == R.id.googleSignin) {
+            if (isNetworkAvailable()) {
                 googleSignin();
-                break;
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.noNetwork, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

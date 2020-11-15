@@ -2,14 +2,14 @@ package com.kumarsaket.encyptedcloud.RubiksCubeAlgo;
 
 public class Rotations {
 
-    public static int gcd(int a, int b){
+    public static int gcd(int a, int b) {
         if (b == 0)
             return a;
         else
             return gcd(b, a % b);
     }
 
-    public static void HorizontalRotation(int [][] arr, int shiftNumber, int size, int fixed_row){
+    public static void HorizontalRotation(int[][] arr, int shiftNumber, int size, int fixed_row) {
         shiftNumber = shiftNumber % size;
         int i, j, k, temp;
         int g_c_d = gcd(shiftNumber, size);
@@ -34,7 +34,7 @@ public class Rotations {
         // }
     }
 
-    public static void VerticalRotation(int [][] arr, int shiftNumber, int size, int fixed_col){
+    public static void VerticalRotation(int[][] arr, int shiftNumber, int size, int fixed_col) {
         shiftNumber = shiftNumber % size;
         int i, j, k, temp;
         int g_c_d = gcd(shiftNumber, size);

@@ -4,32 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.view.Menu;
 
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Environment;
-import android.view.ContextMenu;
 import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -39,13 +28,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.File;
 
-//#31587B
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     GridLayout gridLayout;
-    private Point screenSize;
     private int screenWidth, screenHeight;
-    private TextView username;
     private FirebaseAuth firebaseAuth;
 
     @Override
@@ -54,20 +41,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         firebaseAuth = FirebaseAuth.getInstance();
         Display display = getWindowManager().getDefaultDisplay();
-        screenSize = new Point();
+        Point screenSize = new Point();
         display.getSize(screenSize);
         screenWidth = screenSize.x;
         screenHeight = screenSize.y;
 
         initialize();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(Environment.getExternalStorageDirectory());
-        sb.append(File.separator);
-        sb.append(getResources().getString(R.string.app_name));
-//        if (!new File(sb.toString()).exists())  new File(sb.toString()).mkdir();
-        sb.append(File.separator);
-        checkAndCreateFolder(sb.toString());
+        String sb = Environment.getExternalStorageDirectory() +
+                File.separator +
+                getResources().getString(R.string.app_name) +
+                File.separator;
+        checkAndCreateFolder(sb);
     }
 
     private void checkAndCreateFolder(String s) {
@@ -75,8 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!new File(s).exists()) {
             new File(s).mkdir();
         }
-        if (!new File(s + "Keys").exists()) {
-            new File(s + "Keys").mkdir();
+        if (!new File(s + "cloud").exists()) {
+            new File(s + "cloud").mkdir();
         }
         if (!new File(s + "local").exists()) {
             new File(s + "local").mkdir();
@@ -84,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initialize() {
-        username = findViewById(R.id.welcomeText);
+        TextView username = findViewById(R.id.welcomeText);
         String welcomeText = "Hey, " + firebaseAuth.getCurrentUser().getEmail();
         username.setText(welcomeText);
 
@@ -101,18 +86,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-
     private void setLayoutParams(GridLayout gridLayout) {
+        /*
         float textH = (float) 0.15,
                 textMtop = (float) 0.025,
                 textMbottom = (float) 0;        //total TV height = 0.2
+        */
 
         float cardH = (float) 0.7 / 3,
                 cardMtop = (float) 0.03;         // total grid height = 0.7 + 0.06 = 0.66
 
-        float imgH = (float) (cardH*0.5),
-        imgMtop= (float) (cardH*0.05),
-        imgMbottom = (float) (cardH*0.05);
+        float imgH = (float) (cardH * 0.5),
+                imgMtop = (float) (cardH * 0.05),
+                imgMbottom = (float) (cardH * 0.05);
 
         for (int i = 0; i < gridLayout.getChildCount(); i++) {
             final CardView cardView = (CardView) gridLayout.getChildAt(i);
@@ -122,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (i != 0 && i != 1)
                 layoutParams.topMargin = (int) (screenHeight * cardMtop);
             else
-                layoutParams.topMargin = 0;
+                layoutParams.topMargin = (int) (screenHeight * cardMtop) * 2;
 
             if (i % 2 == 0) {
 //                left child
@@ -138,10 +124,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             LinearLayout linearLayout = (LinearLayout) (cardView.getChildAt(0));
             ImageView imageView = (ImageView) linearLayout.getChildAt(0);
-            LinearLayout.LayoutParams layoutParamsIMG = (LinearLayout.LayoutParams)imageView .getLayoutParams();
-            layoutParamsIMG.height = (int) (screenHeight *imgH);
-            layoutParamsIMG.topMargin = (int) (screenHeight*imgMtop);
-            layoutParamsIMG.bottomMargin = (int) (screenHeight*imgMbottom);
+            LinearLayout.LayoutParams layoutParamsIMG = (LinearLayout.LayoutParams) imageView.getLayoutParams();
+            layoutParamsIMG.height = (int) (screenHeight * imgH);
+            layoutParamsIMG.topMargin = (int) (screenHeight * imgMtop);
+            layoutParamsIMG.bottomMargin = (int) (screenHeight * imgMbottom);
             imageView.setLayoutParams(layoutParamsIMG);
 
 
@@ -176,21 +162,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.signout:
-                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
-                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
-                googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            firebaseAuth.signOut();
-                            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                            finish();
-                        }
+        if (item.getItemId() == R.id.signout) {
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build();
+            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getApplicationContext(), gso);
+            googleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        firebaseAuth.signOut();
+                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        finish();
                     }
-                });
-                break;
+                }
+            });
         }
         return true;
     }

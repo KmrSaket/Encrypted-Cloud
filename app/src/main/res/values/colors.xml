@@ -1,8 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#7b287d</color>
-    <color name="colorPrimaryDark">#330c2f</color>
+    <color name="colorPrimary">#16578B</color>
+    <!--    <color name="colorPrimary">#7b287d</color>-->
+    <color name="colorPrimaryDark">#114269</color>
+    <!--    <color name="colorPrimaryDark">#330c2f</color>-->
     <color name="colorAccent">#b7c0ee</color>
     <color name="color3">#e7dfc6</color>
     <color name="color4">#bc96e6</color>
+
+    <color name="DeepCove">#04043D</color>
+    <color name="PeriwinkleGray">#B0C6E2</color>
+    <color name="Pumice">#D5D7D5</color>
+    <color name="Wedgewood">#4D72A5</color>
+    <color name="Casper">#A9BBD1</color>
+    <color name="ChathamsBlue">#16578B</color>
+    <color name="KashmirBlue">#4C6492</color>
+    <color name="BlueBayoux">#5A7182</color>
+    <color name="Cloud">#D0DEEC</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="e4e4e4">#E4E4E4</color>
 </resources>

@@ -5,11 +5,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="titleTextColor">@color/PeriwinkleGray</item>
+<!--        <item name="colorControlNormal">@color/PeriwinkleGray</item>-->
     </style>
 
     <style name="SplashScreenTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground" > @drawable/splashscreen_bg</item>
-        <item name="colorPrimaryDark">@color/color4</item>
+        <item name="colorPrimaryDark">@color/white</item>
     </style>
 
     <style name="LoginActivity" parent="Theme.AppCompat.NoActionBar">

@@ -4,12 +4,20 @@
 
     <item>
         <shape>
-            <solid android:color="#bc96e6"/>
+            <solid android:color="@color/white"/>
         </shape>
     </item>
 
-<!--    <item android:drawable="@drawable/splashlogo_svg"-->
-<!--        android:gravity="center">-->
-<!--    </item>-->
+    <item android:bottom="150dp">
+        <bitmap android:src="@drawable/splashscreen_logo"
+            android:tint="@color/PeriwinkleGray"
+            android:gravity="center"/>
+    </item>
+
+    <item android:top="150dp">
+        <bitmap android:src="@drawable/splash_text_encrypted_cloud"
+            android:tint="@color/Casper"
+            android:gravity="center"/>
+    </item>
 
 </layer-list>

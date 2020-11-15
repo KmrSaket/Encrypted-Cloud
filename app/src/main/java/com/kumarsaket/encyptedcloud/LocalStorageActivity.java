@@ -26,27 +26,15 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
-import com.google.firebase.storage.UploadTask;
-import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Decryption;
 import com.kumarsaket.encyptedcloud.RubiksCubeAlgo.Encryption;
 import com.snatik.storage.Storage;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 public class LocalStorageActivity extends AppCompatActivity implements View.OnClickListener {
@@ -56,14 +44,12 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
     ImageView imagefile;
     Uri fileUri;
     EditText filepickerNAME;
-    private FirebaseAuth mAuth;
     private int PICK_IMAGE_REQUEST = 101;
     boolean uploadInprogress;
     Handler handler = new Handler();
-    private LinearLayout llUpper, llLower;
+    private LinearLayout llLower;
     private FrameLayout flMiddile;
     NumberProgressBar uploadingProgress;
-    private Point screenSize;
     private int screenWidth, screenHeight;
     Bitmap encryptedbitmap;
 
@@ -73,7 +59,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         setContentView(R.layout.activity_local_storage);
 
         Display display = getWindowManager().getDefaultDisplay();
-        screenSize = new Point();
+        Point screenSize = new Point();
         display.getSize(screenSize);
         screenWidth = screenSize.x;
         screenHeight = screenSize.y;
@@ -83,14 +69,12 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                if (uploadInprogress) {
-                    Toast.makeText(this, "Encryption in Progress", Toast.LENGTH_LONG).show();
-                } else {
-                    this.finish();
-                }
-                break;
+        if (item.getItemId() == android.R.id.home) {
+            if (uploadInprogress) {
+                Toast.makeText(this, R.string.enc_under_progress, Toast.LENGTH_LONG).show();
+            } else {
+                this.finish();
+            }
         }
         return true;
     }
@@ -102,7 +86,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         uploadingProgress = findViewById(R.id.LSAuploadingprogress);
-        llUpper = findViewById(R.id.LSAtopLL);
+        LinearLayout llUpper = findViewById(R.id.LSAtopLL);
         flMiddile = findViewById(R.id.LSAframe);
         llLower = findViewById(R.id.LSAllprogress);
         filepickerNAME = findViewById(R.id.LSAfilename);
@@ -111,7 +95,6 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         imagefile = findViewById(R.id.LSAimagefile);
         doEncrypt = findViewById(R.id.LSAdoEncrypt);
         doEncrypt.setOnClickListener(this);
-        mAuth = FirebaseAuth.getInstance();
         uploadInprogress = false;
         setLayoutParams(llUpper, flMiddile, doEncrypt, llLower);
     }
@@ -158,7 +141,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         switch (v.getId()) {
             case R.id.LSAfilePicker:
                 if (uploadInprogress) {
-                    Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.enc_under_progress, Toast.LENGTH_SHORT).show();
                 } else {
                     Intent fileIntent = new Intent(Intent.ACTION_GET_CONTENT);
                     fileIntent.setType("image/*");
@@ -167,7 +150,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                 break;
             case R.id.LSAdoEncrypt:
                 if (uploadInprogress) {
-                    Toast.makeText(this, "Upload in progress", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.enc_under_progress, Toast.LENGTH_SHORT).show();
                 } else {
                     if (fileUri != null) {
                         new Thread(new Runnable() {
@@ -209,7 +192,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                                         container.getChildAt(1).setVisibility(View.GONE);
                                         container.getChildAt(2).setVisibility(View.VISIBLE);
                                         TextView tv = (TextView) container.getChildAt(0);
-                                        tv.setText("Encrypted");
+                                        tv.setText(R.string.encrypted);
                                     }
                                 });
 
@@ -232,13 +215,13 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                                         uploadingProgress.setProgress(100);
                                         LinearLayout container = (LinearLayout) llLower.getChildAt(1);
                                         TextView tv = (TextView) container.getChildAt(0);
-                                        tv.setText("Uploaded");
+                                        tv.setText(R.string.uploaded);
                                         flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
                                         flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
                                         imagefile.setImageBitmap(encryptedbitmap);
-                                        originalbitmap.recycle();
+//                                        originalbitmap.recycle();
                                         llLower.getChildAt(2).setVisibility(View.VISIBLE);
-                                        Toast.makeText(getApplicationContext(), "Successfully Encrypted"
+                                        Toast.makeText(getApplicationContext(), R.string.enc_success
                                                 , Toast.LENGTH_SHORT).show();
                                         uploadInprogress = false;
                                     }
@@ -247,7 +230,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
                             }
                         }).start();
                     } else {
-                        Toast.makeText(this, "NO file Selected", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.no_file_selected, Toast.LENGTH_SHORT).show();
                     }
                     break;
                 }
@@ -343,7 +326,7 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(getApplication(), "Error while fetching Keys : " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplication(), getString(R.string.error_fetching_keys) + e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -368,17 +351,17 @@ public class LocalStorageActivity extends AppCompatActivity implements View.OnCl
         container.getChildAt(1).setVisibility(View.VISIBLE);
         container.getChildAt(2).setVisibility(View.GONE);
         TextView tv = (TextView) container.getChildAt(0);
-        tv.setText("Encrypting...");
+        tv.setText(R.string.encrypting);
         uploadingProgress.setReachedBarColor(Color.parseColor("#3498DB"));
         uploadingProgress.setProgressTextColor(Color.parseColor("#3498DB"));
         uploadingProgress.setProgress(0);
         LinearLayout container2 = (LinearLayout) llLower.getChildAt(1);
         TextView tv2 = (TextView) container2.getChildAt(0);
-        tv2.setText("Uploading...");
+        tv2.setText(R.string.uploading);
         flMiddile.getChildAt(1).setVisibility(View.INVISIBLE);
         flMiddile.getChildAt(2).setVisibility(View.INVISIBLE);
         llLower.getChildAt(2).setVisibility(View.INVISIBLE);
-        if (encryptedbitmap != null)
-            encryptedbitmap.recycle();
+//        if (encryptedbitmap != null)
+//            encryptedbitmap.recycle();
     }
 }

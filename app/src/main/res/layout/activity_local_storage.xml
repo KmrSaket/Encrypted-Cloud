@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LocalStorageActivity"
-    android:background="@color/color4">
+    android:background="@color/white"
+    tools:context=".LocalStorageActivity">
 
 
     <LinearLayout
@@ -37,9 +37,12 @@
             android:layout_marginLeft="10dp"
             android:layout_weight="0.3"
             android:background="@drawable/login_gmail_bg"
+            android:drawableLeft="@drawable/browse_icon"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="@string/browse_image"
-            android:textColor="#ffffff"
-            android:textSize="15sp" />
+            android:textColor="@color/white"
+            android:textSize="13sp" />
     </LinearLayout>
 
 
@@ -47,7 +50,7 @@
         android:id="@+id/LSAframe"
         android:layout_width="match_parent"
         android:layout_height="350dp"
-        android:background="@color/color3"
+        android:background="@color/Pumice"
         app:layout_constraintBottom_toTopOf="@id/LSAdoEncrypt"
         app:layout_constraintTop_toBottomOf="@id/LSAtopLL">
 
@@ -79,7 +82,6 @@
     </FrameLayout>
 
 
-
     <Button
         android:id="@+id/LSAdoEncrypt"
         android:layout_width="wrap_content"
@@ -89,9 +91,8 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="Upload"
-        android:textColor="#ffffff"
+        android:textColor="@color/white"
         android:textSize="13sp"
-        app:drawableTint="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@id/LSAllprogress"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -121,7 +122,8 @@
                 android:layout_gravity="end"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="2"
-                android:text="Encrypting..." />
+                android:text="@string/encrypting"
+                android:textColor="@color/BlueBayoux" />
 
             <ProgressBar
                 android:id="@+id/LSAencryptingProgress"
@@ -151,7 +153,8 @@
                 android:layout_gravity="end"
                 android:layout_marginBottom="5dp"
                 android:layout_weight="2"
-                android:text="Uploading..." />
+                android:text="@string/uploading"
+                android:textColor="@color/BlueBayoux" />
 
             <com.daimajia.numberprogressbar.NumberProgressBar
                 android:id="@+id/LSAuploadingprogress"
@@ -163,14 +166,13 @@
         </LinearLayout>
 
         <ImageView
-            android:layout_marginTop="5dp"
-            android:layout_gravity="center"
-            android:src="@drawable/tick_mark"
-            tools:visibility="visible"
             android:layout_width="35dp"
             android:layout_height="35dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/tick_mark"
             android:visibility="invisible"
-            app:tint="#00ff00" />
+            tools:visibility="visible" />
     </LinearLayout>
 
 

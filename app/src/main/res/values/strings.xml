@@ -2,8 +2,9 @@
     <string name="app_name">Encypted Cloud</string>
 
     <string name="browse_image">Browse</string>
-    <string name="keyFolder">Keys</string>
+    <string name="keyFolder">keys</string>
     <string name="LocalFolder">local</string>
+    <string name="CloudFolder">cloud</string>
 
 <!--    Main Menu Card Text -->
     <string name="decrypt_any_img">Decrypt \nany Image</string>
@@ -15,4 +16,16 @@
 <!--    Greeting Texts-->
     <string name="welcome_sign_in_to_continue">WELCOME!\nSign In To Continue</string>
     <string name="welcome_text">Hey, example@domain.com</string>
+    <string name="encrypted">Encrypted</string>
+    <string name="uploaded">Uploaded</string>
+    <string name="encrypting">Encrypting...</string>
+    <string name="uploading">Uploading...</string>
+    <string name="noNetwork">No Network</string>
+    <string name="no_image_available">NO IMAGE AVAILABLE</string>
+    <string name="enc_under_progress">Encryption in Progress</string>
+    <string name="enc_success">Successfully Encrypted</string>
+    <string name="no_file_selected">NO file Selected</string>
+    <string name="error_fetching_keys">\"Error while fetching Keys : \"</string>
+    <string name="error_fetching_imageUrl">Unable to fetch Cloud URL</string>
+    <string name="error_saving_keys">\"Error while saving Keys : \"</string>
 </resources>

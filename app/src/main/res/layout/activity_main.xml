@@ -4,34 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#bc96e6"
+    android:background="@color/white"
     tools:context="com.kumarsaket.encyptedcloud.MainActivity">
+
     <TextView
-        android:paddingTop="5dp"
-        app:layout_constraintVertical_bias="0"
-        app:layout_constraintVertical_chainStyle="packed"
         android:id="@+id/welcomeText"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:fontFamily="@font/poppins_medium"
         android:paddingLeft="30dp"
+        android:paddingTop="5dp"
         android:text="@string/welcome_text"
-        android:textColor="#ffffff"
+        android:textColor="@color/BlueBayoux"
         android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@id/home_grid"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/home_grid"/>
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 
     <GridLayout
-        android:paddingBottom="10dp"
-        android:clipToPadding="false"
         android:id="@+id/home_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clipToPadding="false"
         android:columnCount="2"
+        android:paddingBottom="10dp"
         android:rowCount="3"
-        app:layout_constraintTop_toBottomOf="@id/welcomeText"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/welcomeText">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cloudStoreBtn"
@@ -41,7 +42,7 @@
             android:layout_rowWeight="1"
             android:layout_column="0"
             android:layout_columnWeight="1"
-            app:cardBackgroundColor="#E4E4E4"
+            app:cardBackgroundColor="@color/e4e4e4"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp">
 
@@ -57,7 +58,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:src="@drawable/card_store_cloud"
-                    app:tint="#5d576b" />
+                    app:tint="@color/KashmirBlue" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -66,7 +67,7 @@
                     android:gravity="center"
                     android:text="@string/store_to_cloud"
                     android:textAlignment="center"
-                    android:textColor="#707070"
+                    android:textColor="@color/BlueBayoux"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -81,7 +82,7 @@
             android:layout_rowWeight="1"
             android:layout_column="1"
             android:layout_columnWeight="1"
-            app:cardBackgroundColor="#E4E4E4"
+            app:cardBackgroundColor="@color/e4e4e4"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp">
 
@@ -97,7 +98,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:src="@drawable/card_retrieve_cloud"
-                    app:tint="#5d576b" />
+                    app:tint="@color/KashmirBlue" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -105,7 +106,7 @@
                     android:fontFamily="@font/tcm"
                     android:text="@string/retrieve_from_cloud"
                     android:textAlignment="center"
-                    android:textColor="#707070"
+                    android:textColor="@color/BlueBayoux"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -122,7 +123,7 @@
             android:layout_rowWeight="1"
             android:layout_column="0"
             android:layout_columnWeight="1"
-            app:cardBackgroundColor="#E4E4E4"
+            app:cardBackgroundColor="@color/e4e4e4"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp">
 
@@ -138,7 +139,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:src="@drawable/card_store_local"
-                    app:tint="#5d576b"/>
+                    app:tint="@color/KashmirBlue" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -147,7 +148,7 @@
                     android:gravity="center"
                     android:text="@string/store_to_local"
                     android:textAlignment="center"
-                    android:textColor="#707070"
+                    android:textColor="@color/BlueBayoux"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -162,7 +163,7 @@
             android:layout_rowWeight="1"
             android:layout_column="1"
             android:layout_columnWeight="1"
-            app:cardBackgroundColor="#E4E4E4"
+            app:cardBackgroundColor="@color/e4e4e4"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp">
 
@@ -178,7 +179,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:src="@drawable/card_retrieve_local"
-                    app:tint="#5d576b"/>
+                    app:tint="@color/KashmirBlue" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -186,48 +187,48 @@
                     android:fontFamily="@font/tcm"
                     android:text="@string/retrieve_from_local"
                     android:textAlignment="center"
-                    android:textColor="#707070"
+                    android:textColor="@color/BlueBayoux"
                     android:textSize="18sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <androidx.cardview.widget.CardView
+        <!--        <androidx.cardview.widget.CardView-->
 
-            android:id="@+id/decrypt_any_img"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_row="2"
-            android:layout_rowWeight="1"
-            android:layout_column="0"
-            android:layout_columnWeight="1"
-            app:cardBackgroundColor="#E4E4E4"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
+        <!--            android:id="@+id/decrypt_any_img"-->
+        <!--            android:layout_width="150dp"-->
+        <!--            android:layout_height="150dp"-->
+        <!--            android:layout_row="2"-->
+        <!--            android:layout_rowWeight="1"-->
+        <!--            android:layout_column="0"-->
+        <!--            android:layout_columnWeight="1"-->
+        <!--            app:cardBackgroundColor="#E4E4E4"-->
+        <!--            app:cardCornerRadius="20dp"-->
+        <!--            app:cardElevation="2dp">-->
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center_horizontal|center_vertical"
-                android:orientation="vertical">
+        <!--            <LinearLayout-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:layout_gravity="center_horizontal|center_vertical"-->
+        <!--                android:orientation="vertical">-->
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:src="@drawable/card_dec_any_img"
-                    app:tint="#5d576b"/>
+        <!--                <ImageView-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="match_parent"-->
+        <!--                    android:layout_gravity="center"-->
+        <!--                    android:src="@drawable/card_dec_any_img"-->
+        <!--                    app:tint="#5d576b"/>-->
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/tcm"
-                    android:text="@string/decrypt_any_img"
-                    android:textAlignment="center"
-                    android:textColor="#707070"
-                    android:textSize="18sp" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        <!--                <TextView-->
+        <!--                    android:layout_width="match_parent"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:fontFamily="@font/tcm"-->
+        <!--                    android:text="@string/decrypt_any_img"-->
+        <!--                    android:textAlignment="center"-->
+        <!--                    android:textColor="@color/BlueBayoux"-->
+        <!--                    android:textSize="18sp" />-->
+        <!--            </LinearLayout>-->
+        <!--        </androidx.cardview.widget.CardView>-->
 
     </GridLayout>
 

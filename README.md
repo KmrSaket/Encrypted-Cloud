@@ -11,7 +11,7 @@ So in this Android application I have implemented the same concept where images 
 
 ## How does this works?
 * **Encryption phase :-**
-Firstly the image browsed by user is converted into the pixel matrix. This matrix contains the ARGB value of every pixels in the image. </br> This matrix is then used for manipulating the pixel information of the image and a new image with the same dimensions is created.
+Firstly, the image browsed by user is converted into the pixel matrix. This matrix contains the ARGB value of every pixels in the image. </br> This matrix is then used for manipulating the pixel information of the image and a new image with the same dimensions is created.
 In the process of pixel manipulation two arrays are created (whose size is equal to the dimensions of the image in pixel). One array is of size of width of image in pixels and other array is of size of height of image in pixels. And the value of the elements is randomly generated between the range 0 to 2²⁴-1. These two arrays are the randomly generated keys that is stored to user's phone internal storage. </br>
 **Note :- Encrypted image and the key file are given the same name. So during the Decryption also, the name of the image should be same as that of the key file, otherwise it will show key not found error.**
 
@@ -22,7 +22,8 @@ In this phase also the encrypted image is converted into pixel matrix. And then 
 ## Key features
 * Encrypt your image with a random generated key.
 * Images get encrypted and uploaded automatically.
-* The key for the image is stored in your phone internal storage root/Encrypted Cloud/keys.
+* The keyspace is very large and depends on the dimensions of the image.
+* The key and the image is stored in your phone-internal-storage-root/Encrypted Cloud/.
 
 
 ## How to use

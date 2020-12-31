@@ -28,19 +28,28 @@ In this phase also the encrypted image is converted into pixel matrix. And then 
 
 ## How to use
 <ol>
-<li>To use this application the user needs to sign in first using their Google account. This login is used to create a cloud storage account for the user. </br> (GIF)
+<li>To use this application the user needs to sign in first using their Google account. This login is used to create a cloud storage account for the user. </br> 
+<a href="url"><img src="https://github.com/KmrSaket/Encrypted-Cloud/blob/master/Readme%20Resources/Login.png" height="400" ></a>
 </li>
 
-<li>Select any one of the features provided in the home page. </br> (PIC)
+<li>Select any one of the features provided in the home page. </br>
+<a href="url"><img src="https://github.com/KmrSaket/Encrypted-Cloud/blob/master/Readme%20Resources/Home.png" height="400" ></a>
 
-* **Store to Cloud** : Select any image from "BROWSE" button. After the image shows up, click on "UPLOAD" button to encrypt and store the image. Encrypted image and the key file is stored as follows. </br> **Note :- The name of encrypted image and the name of key file are same. This is the necessary condition for decryption.** </br> (PIC)
+* **Store to Cloud** : Select any image from "BROWSE" button. After the image shows up, click on "UPLOAD" button to encrypt and store the image. Encrypted image and the key file is stored as follows. </br> **Note :- The name of encrypted image and the name of key file are same. This is the necessary condition for decryption.** </br>
+<a href="url"><img src="https://github.com/KmrSaket/Encrypted-Cloud/blob/master/Readme%20Resources/Enc_EncryptionInprogress2.png" height="400" ></a>
 
-* **Retrieve from Cloud** : Here decryption takes place automatically. For every image uploaded on the cloud, the application looks for the key in the Phone directory. If the key is not present or if the key file is renamed then it shows key not found error. </br> (GIF)
+* **Retrieve from Cloud** : Here decryption takes place automatically. For every image uploaded on the cloud, the application looks for the key in the Phone directory. If the key is not present or if the key file is renamed then it shows key not found error. </br>
+<a href="url"><img src="https://github.com/KmrSaket/Encrypted-Cloud/blob/master/Readme%20Resources/Dec_DecryptedImages.png" height="400" ></a>
 
-* **Store to Local** : Select any image from "BROWSE" button. After the image shows up, click on "UPLOAD" button to encrypt and store the image. Encrypted image and the key file is stored as follows. </br> **Note :- The name of encrypted image and the name of key file are same. This is the necessary condition for decryption.** </br> (PIC)
+* **Store to Local** : Select any image from "BROWSE" button. After the image shows up, click on "UPLOAD" button to encrypt and store the image. Encrypted image and the key file is stored as follows. </br> **Note :- The name of encrypted image and the name of key file are same. This is the necessary condition for decryption.** </br>
 
-* **Retrieve from Local** : In this also decryption takes place automatically. For every image encrypted and stored in local storage, the application looks for the key in the Phone directory. If the key is not present or if the key file is renamed then it shows key not found error. </br> (GIF)
+* **Retrieve from Local** : In this also decryption takes place automatically. For every image encrypted and stored in local storage, the application looks for the key in the Phone directory. If the key is not present or if the key file is renamed then it shows key not found error. </br>
 </li>
-<li>User can sign out anytime from dashboard. </br> (GIF)
+<li>User can sign out anytime from dashboard. </br>
 </li>
 </ol>
+
+## Other ScreenShots
+<a href="url"><img src="https://github.com/KmrSaket/Encrypted-Cloud/blob/master/Readme%20Resources/Enc_EncryptionCompleted.png" height="400" ></a>
+<a href="url"><img src="https://github.com/KmrSaket/Encrypted-Cloud/blob/master/Readme%20Resources/KeysStorage.png" height="400" ></a>
+<a href="url"><img src="https://github.com/KmrSaket/Encrypted-Cloud/blob/master/Readme%20Resources/KeyGenerated.png" height="400" ></a>
